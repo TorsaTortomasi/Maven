@@ -15,6 +15,7 @@ public class Resident implements Serializable {
   private String city;
   private Date dateOfBirth;
   
+  
   public Resident() {
     super();
   }
