@@ -1,19 +1,26 @@
 package de.hfu;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
 import org.junit.Test;
 
 import de.hfu.residents.domain.Resident;
+import de.hfu.residents.repository.ResidentRepository;
 import de.hfu.residents.repository.ResidentRespositoryStub;
 import de.hfu.residents.service.BaseResidentService;
 import de.hfu.residents.service.ResidentServiceException;
+import static org.easymock.EasyMock.*;
 
 public class ResidentServiceTest {
 
-	
+	List<Resident> testList = new ArrayList<Resident>();
 	
 	BaseResidentService baseresident = new BaseResidentService();
 	ResidentRespositoryStub stub = new ResidentRespositoryStub();
+	
+	ResidentRepository mock = createMock(ResidentRepository.class);
 	
 	Date datum = new Date(1993,1,1);
 	
@@ -27,19 +34,30 @@ public class ResidentServiceTest {
 	@Test
 	public void Test(){
 		
-		stub.add(Georg);
-		stub.add(Hans);
-		stub.add(Lachmachum);
-		stub.add(Peter);
-		stub.add(Uwe);
+//		stub.add(Georg);
+//		stub.add(Hans);
+//		stub.add(Lachmachum);
+//		stub.add(Peter);
+//		stub.add(Uwe);
 		
-		baseresident.setResidentRepository(stub);
-		baseresident.getFilteredResidentsList(Peter);
-		baseresident.getFilteredResidentsList(Hans);
-		baseresident.getFilteredResidentsList(Uwe);
+		
+		expect(mock.getResidents()).andReturn(testList);
+		expect(mock.getResidents()).andReturn(testList);
+		
+		replay(mock);
+		
 		baseresident.getFilteredResidentsList(Georg);
 		baseresident.getFilteredResidentsList(Lachmachum);
 		
+		baseresident.setResidentRepository(mock);
+		
+		//baseresident.setResidentRepository(stub);
+//		baseresident.getFilteredResidentsList(Peter);
+//		baseresident.getFilteredResidentsList(Hans);
+//		baseresident.getFilteredResidentsList(Uwe);
+//		baseresident.getFilteredResidentsList(Georg);
+//		baseresident.getFilteredResidentsList(Lachmachum);
+//		
 		baseresident.getFilteredResidentsList(new Resident("*","*","*","*",datum));
 		baseresident.getFilteredResidentsList(new Resident("*P","*O","*W","*F",datum));
 		baseresident.getFilteredResidentsList(new Resident("*H","*P","*W","*F",datum));
@@ -57,12 +75,13 @@ public class ResidentServiceTest {
 			baseresident.getUniqueResident(Uwe);
 			baseresident.getUniqueResident(Georg);
 			baseresident.getUniqueResident(new Resident("Z","Z","Z","Z",datum));
+			baseresident.getUniqueResident(new Resident("*","*","*","*",datum));
 		} catch (ResidentServiceException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		
+		verify(mock);
 	}
 	
 	
